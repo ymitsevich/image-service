@@ -23,9 +23,9 @@ Data is categorized in 3 kinds: Seller, Contact and Sale.
 Endpoints should have the following specifications:
 
 - `/load`: Upload the file
-- `/seller/{uuid}`: Provide complete seller data via UUID
-- `/seller/{uuid}/contacts`: Provide a list of all contacts established by the seller.
-- `/seller/{uuid}/sales`: Provide a list of all sales data accomplished by the seller.
+- `/sellers/{id}`: Provide complete seller data via id
+- `/sellers/{id}/contacts`: Provide a list of all contacts established by the seller.
+- `/sellers/{id}/sales`: Provide a list of all sales data accomplished by the seller.
 - `/sales/{year}`: Provide an object with two properties: First property as an object with calculated properties (netAmount, grossAmount, taxAmount, profit, % profit) for the period; Second property with list of all sales matching the period.
 
 Profit is considered by the following formula: Gross amount - Tax - Cost.
