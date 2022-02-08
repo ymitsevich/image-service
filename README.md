@@ -11,6 +11,7 @@ The objective of this module is to provide our internal team with more granular 
 
 - Each line of the file represents a contact with a customer (take a look at the repository - there is a sample file)
 - Lines with contact data but missing sales data represents a contact with a customer, either by a visit or call, but no sale accomplished (conversion).
+- UUID is unique per line and identifies one data point.
 
 
 # Technical task description
@@ -46,6 +47,7 @@ We should consider that our high-estimated customer may send:
 - Framework of your choice. Must use a PHP framework. Composer as package management.
 - Avoid using external libraries other than Doctrine and framework-provided ones. Using extra services/tools, like another database provider, broker/queue or caching system, is allowed
 - APIs must expose only JSON
+- Automated testing must be implemented
 
 # Project delivery
 
