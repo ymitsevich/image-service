@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  app:
+    container_name: imsv-php
+    build:
+      context: .
+      dockerfile: .infra/php/Dockerfile
+      target: dev
+    volumes:
+      - ./app:/app:delegated
+    working_dir: /app
+    environment:
+      XDEBUG_CONFIG: idekey=PHPSTORM
+      PHP_IDE_CONFIG: serverName=serv
+    restart: on-failure
+    networks:
+      - app_network
+
+  proxy:
+    container_name: imsv-proxy
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/app
+      - .infra/nginx/app.conf:/etc/nginx/conf.d/default.conf
+    working_dir: /app
+    restart: on-failure
+    networks:
+      - app_network
+
+networks:
+  app_network:

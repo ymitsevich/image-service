@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  app:
+    container_name: imsv-php
+    build:
+      context: .
+      dockerfile: .infra/php/Dockerfile
+      target: base
+      args:
+        APP_ENV: prod
+    working_dir: /app
+    restart: on-failure
+    networks:
+      - app_network
+
+networks:
+  app_network:
