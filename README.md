@@ -1,3 +1,15 @@
+# Image Service
+
+## Description
+
+A small image service which can deliver images using a GET request and which are stored on the server. It is possible to
+use different modifiers to change what will be returned. Two modifiers implemented:
+* crop-modifier (cuts the image and will take height and width as parameters)
+* resize-modifier (resizes the images based on given height and width as parameters)
+Further modifiers could be possible to integrate easily in code.
+
+The services outputs images in the same file format (e.g. jpg) as they have been read.
+
 ## Implemented and utilized
 
 1. Simple service container Pimple
@@ -42,7 +54,7 @@ Prod:
    enabled modifiers.
 3. Add new parameters for the url in \App\Http\Router\RoutesConfiguration to be able to handle them.
 
-### Todo
+## Todo
 
 1. Image upload system.
 2. Func/App test to trigger http endpoints (requires a testing framework and additional effort)
