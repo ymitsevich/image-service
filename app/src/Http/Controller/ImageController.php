@@ -39,10 +39,10 @@ class ImageController
 
     public function processAndCacheImage(
         string $imageName,
-        ...$args
+        string $modifiersParamsString
     ): ?string {
         try {
-            $beautifiedName = $this->imageService->processAndGetBeautifiedName($imageName, $args);
+            $beautifiedName = $this->imageService->processAndGetBeautifiedName($imageName, $modifiersParamsString);
         } catch (ImageException) {
             $this->router->response()->httpCode(400);
 

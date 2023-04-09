@@ -26,12 +26,12 @@ class DashImageNameConverterTest extends TestCase
     /**
      * @dataProvider input
      */
-    public function testConvertToBeautified(string $imageName, string $referencingName = null)
+    public function testConvertToBeautified(array $input, string $referencingName = null)
     {
-        $this->randomDataGenerator->generateId($imageName)
+        $this->randomDataGenerator->generateIdByString($input[0] . $input[1])
             ->shouldBeCalledOnce()
             ->willReturn('dummyRandomString');
-        $assertingName = $this->service->convertToBeautified($imageName);
+        $assertingName = $this->service->convertToBeautified($input[0], $input[1]);
 
         $this->assertSame($referencingName, $assertingName);
     }
@@ -39,8 +39,8 @@ class DashImageNameConverterTest extends TestCase
     public function input(): array
     {
         return [
-            ['test.png', 'test-dummyRandomString.png'],
-            ['sample.jpg', 'sample-dummyRandomString.jpg'],
+            [['test.png', 'resize/10,200'], 'test-dummyRandomString.png'],
+            [['sample.jpg','resize/10,10/crop/10,10,100,200'], 'sample-dummyRandomString.jpg'],
         ];
     }
 }

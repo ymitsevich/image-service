@@ -7,7 +7,7 @@ class RandomDataGenerator
     private const DEFAULT_ALGO = 'sha256';
     private const DEFAULT_LENGTH = 8;
 
-    public function generateId($input): string
+    public function generateIdByString(string $input): string
     {
         $hashBase64 = base64_encode(hash(self::DEFAULT_ALGO, $input, true));
         $hashUrlSafe = strtr($hashBase64, '+/', '-_');

@@ -4,5 +4,5 @@ namespace App\Service\Image\Beautifier;
 
 interface ImageNameConverter
 {
-    public function convertToBeautified(string $imageName): string;
+    public function convertToBeautified(string $imageName, string $modifiersParamsString): string;
 }
