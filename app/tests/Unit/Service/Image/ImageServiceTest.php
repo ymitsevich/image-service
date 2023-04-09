@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Service\Image;
 
+use App\Service\Image\Beautifier\ImageNameConverter;
 use App\Service\Image\Exception\ImageException;
 use App\Service\Image\Exception\ImageNotFoundException;
 use App\Service\Image\Exception\PipelineException;
