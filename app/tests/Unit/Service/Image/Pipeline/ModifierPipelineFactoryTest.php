@@ -15,29 +15,27 @@ class ModifierPipelineFactoryTest extends TestCase
     public function testCreateByArguments()
     {
         $factory = new ModifierPipelineFactory();
-        $pipeline = $factory->createByArguments([
-            'resize' => '100,200',
-            'crop' => '50,50,100,100',
-        ]);
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
+        $pipeline = $factory->createByModifiersParamsString($modifiersParamsString);
 
         $this->assertInstanceOf(Pipeline::class, $pipeline);
 
         $modifiers = $pipeline->getModifiers();
         $this->assertCount(2, $modifiers);
 
-        $resizeModifier = $modifiers[0];
+        $cropModifier = $modifiers[0];
+        $this->assertInstanceOf(CropModifier::class, $cropModifier);
+
+        $resizeModifier = $modifiers[1];
         $this->assertInstanceOf(ResizeModifier::class, $resizeModifier);
 
-        $cropModifier = $modifiers[1];
-        $this->assertInstanceOf(CropModifier::class, $cropModifier);
     }
 
     public function testCreateByArguments_invalidModifier_exception()
     {
+        $modifiersParamsString = 'invalid/10,10,200,200/incorrect/50,50';
         $factory = new ModifierPipelineFactory();
         $this->expectException(PipelineException::class);
-        $factory->createByArguments([
-            'invalid_modifier' => 'invalid_arguments',
-        ]);
+        $factory->createByModifiersParamsString($modifiersParamsString);
     }
 }

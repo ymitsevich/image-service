@@ -23,25 +23,23 @@ class RoutesConfiguration
         $this->router->get('/test', fn() => $this->imageController->test());
 
         $this->router->get(
-            '/{imageName}/crop/{cropParameters?}/resize/{resizeParameters?}',
-            function (string $imageName, string $cropParameters, string $resizeParameters) {
-                $this->imageController->processAndCacheImage(
-                    imageName: $imageName,
-                    crop: $cropParameters,
-                    resize: $resizeParameters,
-                );
-            }
-        )->where([
-            'imageName' => '.*',
-            'resizeParameters' => '\d+,\d+',
-            'cropParameters' => '\d+,\d+,\d+,\d+',
-        ]);
-
-        $this->router->get(
             '/{slug}',
             fn(string $slug) => $this->imageController->getBySlug(slug: $slug)
         )->where([
-            'slug' => '.*',
+            'slug' => '[^\/]+',
+        ]);
+
+        $this->router->get(
+            '/{imageName}/{modifiers}',
+            function (string $imageName, string $modifiers) {
+                $this->imageController->processAndCacheImage(
+                    imageName: $imageName,
+                    modifiersParamsString: $modifiers,
+                );
+            }
+        )->where([
+            'imageName' => "[^\/]+",
+            'modifiers' => '.*',
         ]);
 
         try {

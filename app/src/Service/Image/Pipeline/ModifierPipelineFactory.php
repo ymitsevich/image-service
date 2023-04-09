@@ -7,9 +7,6 @@ use App\Service\Image\Modifier\CropModifier;
 use App\Service\Image\Modifier\Modifier;
 use App\Service\Image\Modifier\ResizeModifier;
 
-use function array_key_exists;
-use function explode;
-
 class ModifierPipelineFactory
 {
     public static array $modifiersFqnMap = [
@@ -20,14 +17,19 @@ class ModifierPipelineFactory
     /**
      * @throws PipelineException
      */
-    public function createByArguments(array $args): Pipeline
+    public function createByModifiersParamsString(string $modifiersParamsString): Pipeline
     {
+        $matches = [];
+        preg_match_all('/(\w+)\/([\d,]+)/', $modifiersParamsString, $matches, PREG_SET_ORDER);
+
         $pipeline = new Pipeline();
-        foreach ($args as $key => $modifierArgs) {
-            if (!array_key_exists($key, static::$modifiersFqnMap)) {
+        foreach ($matches as $modifiersParamsArray) {
+            $modifierName = $modifiersParamsArray[1];
+            $modifierArgs = $modifiersParamsArray[2];
+            if (!array_key_exists($modifierName, static::$modifiersFqnMap)) {
                 throw new PipelineException();
             }
-            $modifierClassFqn = static::$modifiersFqnMap[$key];
+            $modifierClassFqn = static::$modifiersFqnMap[$modifierName];
 
             $modifierArgs = explode(',', $modifierArgs);
             $modifierParametersFqn = $modifierClassFqn::getParametersFqn();

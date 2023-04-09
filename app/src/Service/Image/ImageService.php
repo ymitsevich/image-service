@@ -24,15 +24,9 @@ class ImageService
      */
     public function processAndGetBeautifiedName(
         string $imageName,
-        $args
+        string $modifiersParamsString
     ): string {
-        try {
-            $pipeline = $this->modifierPipelineFactory->createByArguments($args);
-        } catch (PipelineException) {
-            //@todo log
-            throw new ImageException();
-        }
-        $beautifiedName = $this->imageNameConverter->convertToBeautified($imageName);
+        $beautifiedName = $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString);
         $alreadyProcessedImage = $this->imageStorage->get($beautifiedName);
         if ($alreadyProcessedImage) {
             return $beautifiedName;
@@ -43,6 +37,12 @@ class ImageService
             throw new ImageNotFoundException();
         }
 
+        try {
+            $pipeline = $this->modifierPipelineFactory->createByModifiersParamsString($modifiersParamsString);
+        } catch (PipelineException) {
+            //@todo log
+            throw new ImageException();
+        }
         $processedImage = $pipeline->process($image);
         $newImageToStore = (new Image($beautifiedName))->setBlob($processedImage->getBlob());
         try {

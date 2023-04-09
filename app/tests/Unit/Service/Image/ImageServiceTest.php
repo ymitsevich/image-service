@@ -44,34 +44,40 @@ class ImageServiceTest extends TestCase
     public function testProcessAndGetBeautifiedName_pipelineException_exception()
     {
         $imageName = 'test.jpg';
-        $args = [
-            'crop' => '10,10,200,200',
-            'resize' => '50,50',
-        ];
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
 
-        $this->modifierPipelineFactory->createByArguments($args)
+        $beautifiedName = 'beautified-dummy.jpg';
+
+        $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString)
+            ->shouldBeCalledOnce()
+            ->willReturn($beautifiedName);
+
+        $this->imageStorage->get($beautifiedName)
+            ->shouldBeCalledOnce()
+            ->willReturn(null);
+
+        $image = new Image($imageName);
+        $this->imageStorage->get($imageName)
+            ->shouldBeCalledOnce()
+            ->willReturn($image);
+
+        $this->modifierPipelineFactory->createByModifiersParamsString($modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willThrow(PipelineException::class);
+
         $this->imageStorage->put(Argument::type(Image::class))->shouldNotBeCalled();
 
         $this->expectException(ImageException::class);
-        $this->service->processAndGetBeautifiedName($imageName, $args);
+        $this->service->processAndGetBeautifiedName($imageName, $modifiersParamsString);
     }
 
     public function testProcessAndGetBeautifiedName_alreadyProcessedImage_image()
     {
         $imageName = 'test.jpg';
-        $args = [
-            'crop' => '10,10,200,200',
-            'resize' => '50,50',
-        ];
-
-        $this->modifierPipelineFactory->createByArguments($args)
-            ->shouldBeCalledOnce()
-            ->willReturn($this->pipeline);
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
 
         $beautifiedName = 'beautified-dummy.jpg';
-        $this->imageNameConverter->convertToBeautified($imageName)
+        $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($beautifiedName);
         $alreadyProcessedImage = new Image($beautifiedName);
@@ -79,24 +85,17 @@ class ImageServiceTest extends TestCase
             ->willReturn($alreadyProcessedImage);
         $this->imageStorage->put(Argument::type(Image::class))->shouldNotBeCalled();
 
-        $assertingBeautifiedName = $this->service->processAndGetBeautifiedName($imageName, $args);
+        $assertingBeautifiedName = $this->service->processAndGetBeautifiedName($imageName, $modifiersParamsString);
         $this->assertSame($beautifiedName, $assertingBeautifiedName);
     }
 
     public function testProcessAndGetBeautifiedName_sourceImageNotFound_exception()
     {
         $imageName = 'test.jpg';
-        $args = [
-            'crop' => '10,10,200,200',
-            'resize' => '50,50',
-        ];
-
-        $this->modifierPipelineFactory->createByArguments($args)
-            ->shouldBeCalledOnce()
-            ->willReturn($this->pipeline);
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
 
         $beautifiedName = 'beautified-dummy.jpg';
-        $this->imageNameConverter->convertToBeautified($imageName)
+        $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($beautifiedName);
         $this->imageStorage->get($beautifiedName)->shouldBeCalledOnce()
@@ -111,24 +110,21 @@ class ImageServiceTest extends TestCase
         $this->imageStorage->put(Argument::type(Image::class))->shouldNotBeCalled();
 
         $this->expectException(ImageNotFoundException::class);
-        $this->service->processAndGetBeautifiedName($imageName, $args);
+        $this->service->processAndGetBeautifiedName($imageName, $modifiersParamsString);
     }
 
 
     public function testProcessAndGetBeautifiedName_storageException_exception()
     {
         $imageName = 'test.jpg';
-        $args = [
-            'crop' => '10,10,200,200',
-            'resize' => '50,50',
-        ];
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
 
-        $this->modifierPipelineFactory->createByArguments($args)
+        $this->modifierPipelineFactory->createByModifiersParamsString($modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($this->pipeline);
 
         $beautifiedName = 'beautified-dummy.jpg';
-        $this->imageNameConverter->convertToBeautified($imageName)
+        $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($beautifiedName);
         $this->imageStorage->get($beautifiedName)->shouldBeCalledOnce()
@@ -146,23 +142,20 @@ class ImageServiceTest extends TestCase
             ->willThrow(StorageException::class);
 
         $this->expectException(ImageException::class);
-        $this->service->processAndGetBeautifiedName($imageName, $args);
+        $this->service->processAndGetBeautifiedName($imageName, $modifiersParamsString);
     }
 
     public function testProcessAndGetBeautifiedName_complete_beautifiedName()
     {
         $imageName = 'test.jpg';
-        $args = [
-            'crop' => '10,10,200,200',
-            'resize' => '50,50',
-        ];
+        $modifiersParamsString = 'crop/10,10,200,200/resize/50,50';
 
-        $this->modifierPipelineFactory->createByArguments($args)
+        $this->modifierPipelineFactory->createByModifiersParamsString($modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($this->pipeline);
 
         $beautifiedName = 'beautified-dummy.jpg';
-        $this->imageNameConverter->convertToBeautified($imageName)
+        $this->imageNameConverter->convertToBeautified($imageName, $modifiersParamsString)
             ->shouldBeCalledOnce()
             ->willReturn($beautifiedName);
         $this->imageStorage->get($beautifiedName)->shouldBeCalledOnce()
@@ -178,7 +171,7 @@ class ImageServiceTest extends TestCase
             ->willReturn($processedImage);
         $this->imageStorage->put(Argument::type(Image::class))->shouldBeCalledOnce();
 
-        $assertingBeautifiedName = $this->service->processAndGetBeautifiedName($imageName, $args);
+        $assertingBeautifiedName = $this->service->processAndGetBeautifiedName($imageName, $modifiersParamsString);
         $this->assertSame($beautifiedName, $assertingBeautifiedName);
     }
 }
